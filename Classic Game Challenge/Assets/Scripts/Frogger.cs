@@ -73,7 +73,7 @@ public class Frogger : MonoBehaviour
         // Starting position of the player before movement.
         Vector3 startPosition = transform.position;
         
-        // Used to track the time that has passed (elapsed) and the duration of the movement animation.
+        // Used to track the time that has passed (elapsed) and the duration of the movement.
         float elapsed = 0f;
         float duration = 0.125f;
         
