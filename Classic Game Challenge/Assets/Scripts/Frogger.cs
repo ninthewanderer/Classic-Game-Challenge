@@ -43,6 +43,27 @@ public class Frogger : MonoBehaviour
     private void Move(Vector3 direction)
     {
         Vector3 destination = transform.position + direction;
+
+        // Checks if there is a collider with a specific layer label where the destination is. 
+        Collider2D barrier = Physics2D.OverlapBox(destination, Vector2.zero, 0f, LayerMask.GetMask("Barrier"));
+        Collider2D platform = Physics2D.OverlapBox(destination, Vector2.zero, 0f, LayerMask.GetMask("Platform"));
+        
+        // If there is a barrier, the player doesn't move.
+        if (barrier != null)
+        {
+            return;
+        }
+
+        // If there is a platform, the player is set as a child object so that it moves with the platform.
+        if (platform != null)
+        {
+            transform.SetParent(platform.transform);
+        }
+        else // If not on a platform, the player object is no longer a child object of the platform.
+        {
+            transform.SetParent(null);
+        }
+        
         StartCoroutine(Leap(destination));
     }
 
