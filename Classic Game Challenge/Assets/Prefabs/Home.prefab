@@ -11,13 +11,13 @@ GameObject:
   - component: {fileID: 3348337917539530107}
   - component: {fileID: 5744975216489717025}
   - component: {fileID: 9066507045863163699}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: HomeFrog
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &3348337917539530107
 Transform:
   m_ObjectHideFlags: 0
@@ -141,7 +141,8 @@ GameObject:
   - component: {fileID: 1253367231420552638}
   - component: {fileID: 4368810230382159665}
   - component: {fileID: 5080282242677585539}
-  m_Layer: 0
+  - component: {fileID: 4783835584726942997}
+  m_Layer: 8
   m_Name: Home
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -261,3 +262,16 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &4783835584726942997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4794337414945396956}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 23b72de589b3808448abe13eb1530ad3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frog: {fileID: 3791784990484329750}
