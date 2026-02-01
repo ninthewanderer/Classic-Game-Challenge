@@ -1,0 +1,231 @@
+using System.Collections;
+using UnityEngine;
+
+public class GameManager : MonoBehaviour
+{
+    // Variables needed to track game state.
+    private int _score;
+    private int _lives;
+    private int _time;
+    
+    // An array of Home prefabs which stores all the home GameObjects.
+    private Home[] _homes;
+
+    // The player.
+    private Frogger _player;
+    
+    // The game over screen.
+    public GameObject gameOverScreen;
+    
+    // Stores the Timer() coroutine to be stopped later.
+    private IEnumerator _timerCoroutine;
+
+    // As soon as the script loads, this method triggers.
+    private void Awake()
+    {
+        // Finds all the Home prefabs & the player in the level scene.
+        _homes = FindObjectsOfType<Home>();
+        _player = FindObjectOfType<Frogger>();
+    }
+    
+    // As soon as the game starts, this method triggers.
+    private void Start()
+    {
+        // Starts a new game.
+        NewGame();
+        
+        // Evokes the coroutine which will constantly check for the player pressing the ESC key.
+        StartCoroutine(ExitGame());
+        
+        // Stores the Timer() coroutine for later usage.
+        _timerCoroutine = Timer(30);
+    }
+    
+    private void SetScore(int score)
+    {
+        this._score = score;
+        // FIXME: implement UI here.
+    }
+
+    private void SetLives(int lives)
+    {
+        this._lives = lives;
+        // FIXME: implement UI here.
+    }
+    
+    // The beginning of the game.
+    private void NewGame()
+    { 
+        // Hides the game over menu/UI.
+        gameOverScreen.SetActive(false);
+        
+        // Resets score and provides a fresh set of lives.
+        SetScore(0);
+        SetLives(3);
+        
+        // Starts a new level.
+        NewLevel();
+    }
+
+    // Triggers after collecting all home objects (frogs or rubber ducks).
+    private void NewLevel()
+    {
+        // Ensures all the homes are reset at the start of a new level.
+        for (int i = 0; i < _homes.Length; i++)
+        {
+            _homes[i].enabled = false;
+        }
+        
+        // Respawns the player.
+        Respawn();
+    }
+
+    // Respawns the player.
+    private void Respawn()
+    {
+        _player.Respawn();
+        
+        // Stops then restarts the timer after the player respawns.
+        if (_timerCoroutine != null)
+        {
+            StopCoroutine(_timerCoroutine);
+        }
+        
+        StartCoroutine(Timer(30));
+    }
+    
+    // Ends the game.
+    private void GameOver()
+    {
+        // Hides the player.
+        _player.gameObject.SetActive(false);
+        
+        // Turns on the game over menu/UI.
+        gameOverScreen.SetActive(true);
+        
+        // Stops the game timer.
+        StopCoroutine(_timerCoroutine);
+        StartCoroutine(PlayAgain());
+    }
+
+    private IEnumerator Timer(int duration)
+    {
+        // Sets the time to the duration provided by Respawn().
+        _time = duration;
+
+        // Counts down every second while the player is alive.
+        while (_time > 0)
+        {
+            yield return new WaitForSeconds(1);
+            _time--;
+        }
+        
+        // If time runs out, the player dies.
+        _player.Death();
+    }
+
+    // Checks if the player is trying to exit the game (for debug purposes/assignment requirement).
+    private IEnumerator ExitGame()
+    {
+        bool exitGame = false;
+
+        while (!exitGame)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                exitGame = true;
+                Application.Quit();
+            }
+            
+            yield return null;
+        }
+    }
+    
+    // Checks if the player would like to play again.
+    private IEnumerator PlayAgain()
+    {
+        // False by default.
+        bool playAgain = false;
+
+        // FIXME: currently, the player can play again if they press tab. Will need to be updated alongside UI.
+        while (!playAgain)
+        {
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                playAgain = true;
+            }
+            
+            yield return null;
+        }
+
+        // If the player wants to play again, NewGame() is called.
+        NewGame();
+    }
+
+    // Is called by Home.cs to track when a home has been collected.
+    public void HomeCollected()
+    {
+        // FIXME: uncomment & fix this sprite if we add a celebration animation/sprite.
+        // frogger.gameObject.SetActive(false);
+        
+        // Calculates bonus points based on time remaining. For every second remaining, you get 20 points.
+        int bonusPoints = _time * 20;
+        
+        // Player gets 50 points + however many bonusPoints after clearing a home.
+        SetScore(_score + bonusPoints + 50);
+        
+        // If the level has been cleared after the home is collected, a new level will begin.
+        if (Cleared())
+        {
+            // Player gets 1000 points after clearing a level.
+            SetScore(_score + 1000);
+            
+            // NewLevel() is called after a 1-second delay.
+            Invoke(nameof(NewLevel), 1f);
+        }
+        else // Otherwise, a new round begins.
+        {
+            // NewRound() is called after a 1-second delay.
+            Invoke(nameof(Respawn), 1f);
+        }
+    }
+
+    // Whenever the player moves to a new farthest row, they will gain 10 points.
+    public void AdvancedRow()
+    {
+        SetScore(_score + 10);
+    }
+    
+    // Removes a life, respawns player, determines if game continues or ends.
+    public void Died()
+    {
+        // Takes 1 life away from the player.
+        SetLives(_lives - 1);
+
+        // If the player has lives left, they can respawn. Otherwise, the game will end.
+        if (_lives > 0)
+        {
+            Invoke(nameof(Respawn), 1f);
+        }
+        else
+        {
+            Invoke(nameof(GameOver), 1f);
+        }
+    }
+    
+    // Checks if the level has been cleared.
+    private bool Cleared()
+    {
+        // Checks the homes array to see if all the homes have been enabled. If not, level has not been cleared.
+        for (int i = 0; i < _homes.Length; i++)
+        {
+            if (!_homes[i].enabled)
+            {
+                return false;
+            }
+        }
+
+        // If all the homes have been enabled, the level has been cleared.
+        return true;
+    }
+}
