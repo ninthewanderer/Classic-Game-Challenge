@@ -11,6 +11,9 @@ public class Frogger : MonoBehaviour
     
     // Stores the starting position of the player for respawning.
     private Vector3 spawnPosition;
+    
+    // Stores how far the player has gotten.
+    private float farthestRow;
 
     // Gets needed components of the player GameObject once the game starts & obtains starting/spawning position.
     private void Awake()
@@ -79,8 +82,15 @@ public class Frogger : MonoBehaviour
             transform.position = destination;
             Death();
         }
-        else
+        else // If none of the above is true, the player can move.
         {
+            // If the player is now jumping to a place further than they've ever reached, they will gain points.
+            if (destination.y > farthestRow)
+            {
+                farthestRow = destination.y;
+                FindObjectOfType<GameManager>().AdvancedRow();
+            }
+            
             StartCoroutine(Leap(destination));
         }
     }
@@ -113,7 +123,7 @@ public class Frogger : MonoBehaviour
     }
 
     // When the player dies, this method will run.
-    private void Death()
+    public void Death()
     {
         // Ensures the player cannot trigger Leap() while respawning.
         StopAllCoroutines();
@@ -131,8 +141,8 @@ public class Frogger : MonoBehaviour
         // Ensures the player cannot move.
         enabled = false;
         
-        // Respawns the player after a 1-second delay.
-        Invoke(nameof(Respawn), 1f);
+        // Finds the GameManager to let it know the player has died.
+        FindObjectOfType<GameManager>().Died();
     }
     
     // Allows the player to respawn after death.
@@ -145,6 +155,7 @@ public class Frogger : MonoBehaviour
         transform.rotation = Quaternion.identity;
         _spriteRenderer.sprite = idleSprite;
         transform.position = spawnPosition;
+        farthestRow = spawnPosition.y;
         
         // FIXME: uncomment this and modify if we're adding a celebration sprite/animation.
         // gameObject.SetActive(true);

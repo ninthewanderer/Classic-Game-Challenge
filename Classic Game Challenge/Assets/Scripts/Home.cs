@@ -22,14 +22,11 @@ public class Home : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            // First enables home then resets the player to the starting position using Respawn() after 1 second.
+            // Enables home.
             enabled = true;
-            Frogger player = other.gameObject.GetComponent<Frogger>();
             
-            // FIXME: uncomment & fix this sprite if we add a celebration animation/sprite.
-            // frogger.gameObject.SetActive(false);
-            
-            player.Invoke(nameof(player.Respawn), 1f);
+            // Finds the Game Manager and calls the HomeCollected() method.
+            FindObjectOfType<GameManager>().HomeCollected();
         }
     }
 }
