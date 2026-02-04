@@ -3,6 +3,8 @@ using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
 
+// FIXME: Make sure you change all the timer coroutine-specific stopping lines to just stop all coroutines and start up the escape key coroutine in all places after.
+
 public class GameManager : MonoBehaviour
 {
     // Variables needed to track game state.
@@ -108,9 +110,9 @@ public class GameManager : MonoBehaviour
         
         // Turns on the game over menu/UI.
         gameOverScreen.SetActive(true);
-        
+
         // Stops the game timer.
-        StopCoroutine(_timerCoroutine);
+        StopAllCoroutines();
         StartCoroutine(PlayAgain());
     }
 
@@ -161,13 +163,14 @@ public class GameManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Return))
             {
                 playAgain = true;
+                NewGame();
             }
             
             yield return null;
         }
 
         // If the player wants to play again, NewGame() is called.
-        NewGame();
+        //NewGame();
     }
 
     // Is called by Home.cs to track when a home has been collected.
