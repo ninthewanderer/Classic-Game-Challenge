@@ -91,7 +91,7 @@ public class GameManager : MonoBehaviour
     // Respawns the player.
     private void Respawn()
     {
-        _player.Respawn();
+        _player.Respawn(); //
         
         // Stops then restarts the timer after the player respawns.
         if (_timerCoroutine != null)
