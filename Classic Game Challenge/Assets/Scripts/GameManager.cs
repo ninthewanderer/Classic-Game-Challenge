@@ -16,9 +16,6 @@ public class GameManager : MonoBehaviour
     
     // The game over screen.
     public GameObject gameOverScreen;
-    
-    // Stores the Timer() coroutine to be stopped later.
-    private IEnumerator _timerCoroutine;
 
     // As soon as the script loads, this method triggers.
     private void Awake()
@@ -36,9 +33,6 @@ public class GameManager : MonoBehaviour
         
         // Evokes the coroutine which will constantly check for the player pressing the ESC key.
         StartCoroutine(ExitGame());
-        
-        // Stores the Timer() coroutine for later usage.
-        _timerCoroutine = Timer(30);
     }
     
     private void SetScore(int score)
@@ -83,15 +77,13 @@ public class GameManager : MonoBehaviour
     // Respawns the player.
     private void Respawn()
     {
+        // Stops all current coroutines since this includes the timer.
+        StopAllCoroutines();
+        
+        // Calls the Frogger.cs Respawn() method and then re-starts necessary coroutines.
         _player.Respawn();
-        
-        // Stops then restarts the timer after the player respawns.
-        if (_timerCoroutine != null)
-        {
-            StopCoroutine(_timerCoroutine);
-        }
-        
-        StartCoroutine(Timer(30));
+        StartCoroutine(Timer(30)); 
+        StartCoroutine(ExitGame());
     }
     
     // Ends the game.
@@ -103,8 +95,11 @@ public class GameManager : MonoBehaviour
         // Turns on the game over menu/UI.
         gameOverScreen.SetActive(true);
         
-        // Stops the game timer.
-        StopCoroutine(_timerCoroutine);
+        // Stops all coroutines, including the game timer. 
+        StopAllCoroutines();
+        
+        // Restarts the ExitGame coroutine since it needs to always run and then starts PlayAgain().
+        StartCoroutine(ExitGame());
         StartCoroutine(PlayAgain());
     }
 
@@ -147,7 +142,7 @@ public class GameManager : MonoBehaviour
         // False by default.
         bool playAgain = false;
 
-        // FIXME: currently, the player can play again if they press tab. Will need to be updated alongside UI.
+        // FIXME: currently, the player can play again if they press tab.
         while (!playAgain)
         {
             if (Input.GetKeyDown(KeyCode.Return))
@@ -158,15 +153,16 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
-        // If the player wants to play again, NewGame() is called.
+        // If the player wants to play again, NewGame() is called & the player sprite is re-enabled.
+        _player.gameObject.SetActive(true);
         NewGame();
     }
 
     // Is called by Home.cs to track when a home has been collected.
     public void HomeCollected()
     {
-        // FIXME: uncomment & fix this sprite if we add a celebration animation/sprite.
-        // frogger.gameObject.SetActive(false);
+        // FIXME: fix this sprite if we add a celebration animation/sprite.
+        _player.gameObject.SetActive(false);
         
         // Calculates bonus points based on time remaining. For every second remaining, you get 20 points.
         int bonusPoints = _time * 20;
