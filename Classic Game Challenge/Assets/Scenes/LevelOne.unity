@@ -4308,6 +4308,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Frogger
       objectReference: {fileID: 0}
+    - target: {fileID: 7197486278029697394, guid: 9f63a704da6a6e4468470eb4318252d3, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
