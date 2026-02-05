@@ -1,5 +1,7 @@
 using System.Collections;
+using System.Globalization;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,6 +18,11 @@ public class GameManager : MonoBehaviour
     
     // The game over screen.
     public GameObject gameOverScreen;
+    
+    // Text for UI
+    public Text _scoreText;
+    public Text _livesText;
+    public Text _timeText;
 
     // As soon as the script loads, this method triggers.
     private void Awake()
@@ -38,13 +45,13 @@ public class GameManager : MonoBehaviour
     private void SetScore(int score)
     {
         this._score = score;
-        // FIXME: implement UI here.
+        _scoreText.text = score.ToString();
     }
 
     private void SetLives(int lives)
     {
         this._lives = lives;
-        // FIXME: implement UI here.
+        _livesText.text = lives.ToString();
     }
     
     // The beginning of the game.
@@ -107,12 +114,14 @@ public class GameManager : MonoBehaviour
     {
         // Sets the time to the duration provided by Respawn().
         _time = duration;
+        _timeText.text = _time.ToString();
 
         // Counts down every second while the player is alive.
         while (_time > 0)
         {
             yield return new WaitForSeconds(1);
             _time--;
+            _timeText.text = _time.ToString();
         }
         
         // If time runs out, the player dies.
