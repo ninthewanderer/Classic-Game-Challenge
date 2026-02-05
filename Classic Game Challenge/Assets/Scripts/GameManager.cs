@@ -18,6 +18,10 @@ public class GameManager : MonoBehaviour
     
     // The game over screen.
     public GameObject gameOverScreen;
+
+    public Text _scoreText;
+    public Text _livesText;
+    public Text _timeText;
     
     // Text for UI
     public Text _scoreText;
@@ -157,6 +161,7 @@ public class GameManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Return))
             {
                 playAgain = true;
+                NewGame();
             }
             
             yield return null;
