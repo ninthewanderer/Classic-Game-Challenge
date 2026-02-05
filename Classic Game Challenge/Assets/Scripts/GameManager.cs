@@ -18,10 +18,6 @@ public class GameManager : MonoBehaviour
     
     // The game over screen.
     public GameObject gameOverScreen;
-
-    public Text _scoreText;
-    public Text _livesText;
-    public Text _timeText;
     
     // Text for UI
     public Text _scoreText;
@@ -167,8 +163,7 @@ public class GameManager : MonoBehaviour
             yield return null;
         }
 
-        // If the player wants to play again, NewGame() is called & the player sprite is re-enabled.
-        _player.gameObject.SetActive(true);
+        // If the player wants to play again, NewGame() is called.
         NewGame();
     }
 
