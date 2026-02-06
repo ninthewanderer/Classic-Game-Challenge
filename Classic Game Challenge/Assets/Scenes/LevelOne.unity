@@ -2509,7 +2509,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1323070205}
   m_Layer: 0
-  m_Name: Game Over Screen (Placeholder)
+  m_Name: Game Over Screen
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

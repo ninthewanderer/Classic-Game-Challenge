@@ -876,7 +876,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &238437184
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4691,7 +4691,7 @@ PrefabInstance:
     - target: {fileID: 1946331115256372821, guid: c950e87232bad214c82505c5c0c62008, type: 3}
       propertyPath: gameOverScreen
       value: 
-      objectReference: {fileID: 1323070204}
+      objectReference: {fileID: 1018101917}
     - target: {fileID: 8034486257130953863, guid: c950e87232bad214c82505c5c0c62008, type: 3}
       propertyPath: m_Name
       value: Game Manager
