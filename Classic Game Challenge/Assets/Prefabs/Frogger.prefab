@@ -76,12 +76,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
-  m_Sprite: {fileID: 21300000, guid: bacca888a0961ca45abb7890c40835b2, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 9e95776a0aa97a047870a6c64d7b08d7, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.16, y: 0.16}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -123,8 +123,8 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
+    oldSize: {x: 0.16, y: 0.16}
+    newSize: {x: 0.16, y: 0.16}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -171,6 +171,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4faf547a6e629944b9aaee632bacaf32, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  idleSprite: {fileID: 21300000, guid: bacca888a0961ca45abb7890c40835b2, type: 3}
-  leapSprite: {fileID: 21300000, guid: 6927f3df01613714a93152f465aa1a65, type: 3}
-  deadSprite: {fileID: 21300000, guid: 197a7b23d8cd23e4bbab79e17d3090fd, type: 3}
+  idleSprite: {fileID: 21300000, guid: 9e95776a0aa97a047870a6c64d7b08d7, type: 3}
+  leapSprite: {fileID: 21300000, guid: 829490c36bb43e940bea689fe91126bc, type: 3}
+  deadSprite: {fileID: 21300000, guid: 19c2322f5ba0b8f4a820f988fb63ff62, type: 3}
