@@ -171,11 +171,5 @@ public class Frogger : MonoBehaviour
         {
             Death();
         }
-        
-        // Kills the player if they collide with a death barrier.
-        if (enabled && other.gameObject.layer == LayerMask.NameToLayer("DeathBarrier"))
-        {
-            Death();
-        }
     }
 }
