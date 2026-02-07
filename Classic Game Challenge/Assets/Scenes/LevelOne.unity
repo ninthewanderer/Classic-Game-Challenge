@@ -1786,7 +1786,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1363792032}
   - component: {fileID: 1363792033}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: DeathBarrierLeft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2225,7 +2225,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1638240704}
   - component: {fileID: 1638240705}
-  m_Layer: 9
+  m_Layer: 11
   m_Name: DeathBarrierRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
