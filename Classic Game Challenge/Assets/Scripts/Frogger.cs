@@ -157,8 +157,9 @@ public class Frogger : MonoBehaviour
         transform.position = spawnPosition;
         farthestRow = spawnPosition.y;
         
-        // Allows the player to move again and re-actives them if inactive.
-        this.gameObject.SetActive(true);
+        // FIXME: uncomment this and modify if we're adding a celebration sprite/animation.
+        // gameObject.SetActive(true);
+        
         enabled = true;
     }
 
