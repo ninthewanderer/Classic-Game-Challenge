@@ -1,9 +1,5 @@
 using System.Collections;
-using System.Globalization;
 using UnityEngine;
-using UnityEngine.UI;
-
-// FIXME: Make sure you change all the timer coroutine-specific stopping lines to just stop all coroutines and start up the escape key coroutine in all places after.
 
 public class GameManager : MonoBehaviour
 {
@@ -20,10 +16,6 @@ public class GameManager : MonoBehaviour
     
     // The game over screen.
     public GameObject gameOverScreen;
-
-    public Text _scoreText;
-    public Text _livesText;
-    public Text _timeText;
     
     // Stores the Timer() coroutine to be stopped later.
     private IEnumerator _timerCoroutine;
@@ -52,13 +44,13 @@ public class GameManager : MonoBehaviour
     private void SetScore(int score)
     {
         this._score = score;
-        _scoreText.text = score.ToString();
+        // FIXME: implement UI here.
     }
 
     private void SetLives(int lives)
     {
         this._lives = lives;
-        _livesText.text = lives.ToString();
+        // FIXME: implement UI here.
     }
     
     // The beginning of the game.
@@ -91,7 +83,7 @@ public class GameManager : MonoBehaviour
     // Respawns the player.
     private void Respawn()
     {
-        _player.Respawn(); //
+        _player.Respawn();
         
         // Stops then restarts the timer after the player respawns.
         if (_timerCoroutine != null)
@@ -110,9 +102,9 @@ public class GameManager : MonoBehaviour
         
         // Turns on the game over menu/UI.
         gameOverScreen.SetActive(true);
-
+        
         // Stops the game timer.
-        StopAllCoroutines();
+        StopCoroutine(_timerCoroutine);
         StartCoroutine(PlayAgain());
     }
 
@@ -120,14 +112,12 @@ public class GameManager : MonoBehaviour
     {
         // Sets the time to the duration provided by Respawn().
         _time = duration;
-        _timeText.text = _time.ToString();
 
         // Counts down every second while the player is alive.
         while (_time > 0)
         {
             yield return new WaitForSeconds(1);
             _time--;
-            _timeText.text = _time.ToString();
         }
         
         // If time runs out, the player dies.
@@ -163,14 +153,13 @@ public class GameManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Return))
             {
                 playAgain = true;
-                NewGame();
             }
             
             yield return null;
         }
 
         // If the player wants to play again, NewGame() is called.
-        //NewGame();
+        NewGame();
     }
 
     // Is called by Home.cs to track when a home has been collected.
