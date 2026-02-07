@@ -157,8 +157,8 @@ public class Frogger : MonoBehaviour
         transform.position = spawnPosition;
         farthestRow = spawnPosition.y;
         
-        // FIXME: modify if we're adding a celebration sprite/animation.
-        gameObject.SetActive(true);
+        // FIXME: uncomment this and modify if we're adding a celebration sprite/animation.
+        // gameObject.SetActive(true);
         
         enabled = true;
     }
