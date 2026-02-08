@@ -3,7 +3,14 @@ guid: 4faf547a6e629944b9aaee632bacaf32
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - idleSprite: {instanceID: 0}
+  - leapSprite: {instanceID: 0}
+  - deadSprite: {instanceID: 0}
+  - moveSound: {fileID: 8300000, guid: 14f91a8361699a04e863067d6a6df44d, type: 3}
+  - waterSplash: {fileID: 8300000, guid: fdfea1bc6dc64cd42871f75b1bcd8ca2, type: 3}
+  - squishSound: {fileID: 8300000, guid: fcabef9c06bc6b8489e5ac9123ffe938, type: 3}
+  - crashSound: {fileID: 8300000, guid: 76be0c5bcbbeec743b0c09c4cb49d712, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

@@ -8,7 +8,12 @@ public class Frogger : MonoBehaviour
     public Sprite idleSprite;
     public Sprite leapSprite;
     public Sprite deadSprite;
-    
+    private AudioSource audioSource;
+    public AudioClip moveSound;
+    public AudioClip waterSplash;
+    public AudioClip squishSound;
+    public AudioClip crashSound;
+
     // Stores the starting position of the player for respawning.
     private Vector3 spawnPosition;
     
@@ -20,6 +25,7 @@ public class Frogger : MonoBehaviour
     {
         _spriteRenderer = GetComponent<SpriteRenderer>();
         spawnPosition = transform.position;
+        audioSource = GetComponent<AudioSource>();
     }
     
     // Checks for player movement inputs every frame.
@@ -107,6 +113,7 @@ public class Frogger : MonoBehaviour
         
         // While the player is "leaping", the sprite changes to give the illusion of animation.
         _spriteRenderer.sprite = leapSprite;
+        audioSource.PlayOneShot(moveSound);   //plays the movement sound
 
         // Moves the player smoothly from frame to frame.
         while (elapsed < duration)
@@ -125,6 +132,7 @@ public class Frogger : MonoBehaviour
     // When the player dies, this method will run.
     public void Death()
     {
+        audioSource.PlayOneShot(squishSound);
         // Ensures the player cannot trigger Leap() while respawning.
         StopAllCoroutines();
         
@@ -169,12 +177,17 @@ public class Frogger : MonoBehaviour
         // Also checks if the player is on a platform (which will be their parent).
         if (enabled && other.gameObject.layer == LayerMask.NameToLayer("Obstacle") && transform.parent == null)
         {
+            if (other.gameObject.CompareTag("Water")) { audioSource.PlayOneShot(waterSplash); }
+            if (other.gameObject.CompareTag("Car")) { audioSource.PlayOneShot(crashSound); }
+            audioSource.PlayOneShot(squishSound);
             Death();
         }
         
         // Kills the player if they collide with a death barrier.
         if (enabled && other.gameObject.layer == LayerMask.NameToLayer("DeathBarrier"))
         {
+            if (other.gameObject.CompareTag("Water")) { audioSource.PlayOneShot(waterSplash); }
+            
             Death();
         }
     }
