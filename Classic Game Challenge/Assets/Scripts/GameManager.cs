@@ -9,7 +9,10 @@ public class GameManager : MonoBehaviour
     private int _score;
     private int _lives;
     private int _time;
-    
+    private AudioSource audioSource;
+    public AudioClip duckSqueak;
+
+
     // An array of Home prefabs which stores all the home GameObjects.
     private Home[] _homes;
 
@@ -30,6 +33,7 @@ public class GameManager : MonoBehaviour
         // Finds all the Home prefabs & the player in the level scene.
         _homes = FindObjectsOfType<Home>();
         _player = FindObjectOfType<Frogger>();
+        audioSource = GetComponent<AudioSource>();
     }
     
     // As soon as the game starts, this method triggers.
@@ -172,7 +176,9 @@ public class GameManager : MonoBehaviour
     {
         // FIXME: fix this sprite if we add a celebration animation/sprite.
         _player.gameObject.SetActive(false);
-        
+
+        audioSource.PlayOneShot(duckSqueak); //plays squeak when duck is picked up
+
         // Calculates bonus points based on time remaining. For every second remaining, you get 20 points.
         int bonusPoints = _time * 20;
         
