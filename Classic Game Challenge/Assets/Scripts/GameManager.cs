@@ -158,21 +158,20 @@ public class GameManager : MonoBehaviour
         }
     }
     
-    // Coroutine that makes Unity wait before executing the next line of code.
+    // Coroutine that switches to the next scene.
     private IEnumerator NewScene()
     {
         // Waits for the celebration animation to finish playing before continuing.
         yield return new WaitForSecondsRealtime(3);
         
-        // Turns on the next level screen.
-        nextLevelScreen.SetActive(true);
-        
-        // Wait for another few seconds before continuing to switch the scene.
-        yield return new WaitForSecondsRealtime(3);
-        
         // If the player has cleared the level, they will either move onto the next level or see the win screen.
         if (SceneManager.GetActiveScene().buildIndex == 1)
         {
+            // Turns on the next level screen.
+            nextLevelScreen.SetActive(true);
+            
+            // Wait for another few seconds before continuing to switch the scene.
+            yield return new WaitForSecondsRealtime(3);
             SceneManager.LoadScene(2);
         }
         else
