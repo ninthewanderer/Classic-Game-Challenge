@@ -1,7 +1,7 @@
 using System.Collections;
-using System.Globalization;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,9 +9,10 @@ public class GameManager : MonoBehaviour
     private int _score;
     private int _lives;
     private int _time;
+    
+    // Variables used to store audio.
     private AudioSource audioSource;
     public AudioClip duckSqueak;
-
 
     // An array of Home prefabs which stores all the home GameObjects.
     private Home[] _homes;
@@ -19,8 +20,9 @@ public class GameManager : MonoBehaviour
     // The player.
     private Frogger _player;
     
-    // The game over screen.
+    // The game over & next level screens.
     public GameObject gameOverScreen;
+    public GameObject nextLevelScreen;
     
     // Text for UI
     public Text _scoreText;
@@ -30,7 +32,7 @@ public class GameManager : MonoBehaviour
     // As soon as the script loads, this method triggers.
     private void Awake()
     {
-        // Finds all the Home prefabs & the player in the level scene.
+    // Finds all the Home prefabs & the player in the level scene.
         _homes = FindObjectsOfType<Home>();
         _player = FindObjectOfType<Frogger>();
         audioSource = GetComponent<AudioSource>();
@@ -41,9 +43,6 @@ public class GameManager : MonoBehaviour
     {
         // Starts a new game.
         NewGame();
-        
-        // Evokes the coroutine which will constantly check for the player pressing the ESC key.
-        StartCoroutine(ExitGame());
     }
     
     private void SetScore(int score)
@@ -94,7 +93,6 @@ public class GameManager : MonoBehaviour
         // Calls the Frogger.cs Respawn() method and then re-starts necessary coroutines.
         _player.Respawn();
         StartCoroutine(Timer(30)); 
-        StartCoroutine(ExitGame());
     }
     
     // Ends the game.
@@ -109,8 +107,7 @@ public class GameManager : MonoBehaviour
         // Stops all coroutines, including the game timer. 
         StopAllCoroutines();
         
-        // Restarts the ExitGame coroutine since it needs to always run and then starts PlayAgain().
-        StartCoroutine(ExitGame());
+        // Starts the PlayAgain() coroutine.
         StartCoroutine(PlayAgain());
     }
 
@@ -131,23 +128,6 @@ public class GameManager : MonoBehaviour
         // If time runs out, the player dies.
         _player.Death();
     }
-
-    // Checks if the player is trying to exit the game (for debug purposes/assignment requirement).
-    private IEnumerator ExitGame()
-    {
-        bool exitGame = false;
-
-        while (!exitGame)
-        {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                exitGame = true;
-                Application.Quit();
-            }
-            
-            yield return null;
-        }
-    }
     
     // Checks if the player would like to play again.
     private IEnumerator PlayAgain()
@@ -155,7 +135,7 @@ public class GameManager : MonoBehaviour
         // False by default.
         bool playAgain = false;
 
-        // FIXME: currently, the player can play again if they press tab.
+        // If the player presses the enter key, they will play again.
         while (!playAgain)
         {
             if (Input.GetKeyDown(KeyCode.Return))
@@ -166,9 +146,42 @@ public class GameManager : MonoBehaviour
             
             yield return null;
         }
+        
+        // Checks the current scene. If the player is on Level 2, they will restart at Level 1.
+        if (SceneManager.GetActiveScene().buildIndex == 2)
+        {
+            SceneManager.LoadScene(1);
+        }
+        else // If the player is already on Level 1, they will just restart.
+        {
+            NewGame();
+        }
+    }
+    
+    // Coroutine that makes Unity wait before executing the next line of code.
+    private IEnumerator NewScene()
+    {
+        // Waits for the celebration animation to finish playing before continuing.
+        yield return new WaitForSecondsRealtime(3);
+        
+        // Turns on the next level screen.
+        nextLevelScreen.SetActive(true);
+        
+        // Wait for another few seconds before continuing to switch the scene.
+        yield return new WaitForSecondsRealtime(3);
+        
+        // If the player has cleared the level, they will either move onto the next level or see the win screen.
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            SceneManager.LoadScene(2);
+        }
+        else
+        {
+            SceneManager.LoadScene(3);
+        }
 
-        // If the player wants to play again, NewGame() is called.
-        NewGame();
+        // Ensures in case there are any issues that the coroutine ends.
+        yield break;
     }
 
     // Is called by Home.cs to track when a home has been collected.
@@ -191,12 +204,11 @@ public class GameManager : MonoBehaviour
             // Player gets 1000 points after clearing a level.
             SetScore(_score + 1000);
             
-            // NewLevel() is called after a 1-second delay.
-            Invoke(nameof(NewLevel), 1f);
+            // NewScene() is called to switch scenes.
+            StartCoroutine(NewScene());
         }
-        else // Otherwise, a new round begins.
+        else // Otherwise, a new round begins and the player is respawned normally.
         {
-            // NewRound() is called after a 1-second delay.
             Invoke(nameof(Respawn), 1f);
         }
     }
