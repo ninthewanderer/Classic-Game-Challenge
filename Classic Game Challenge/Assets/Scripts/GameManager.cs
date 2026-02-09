@@ -141,20 +141,18 @@ public class GameManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Return))
             {
                 playAgain = true;
-                NewGame();
+                
+                // Checks the current scene. If the player is on Level 2, they will restart at Level 1.
+                if (SceneManager.GetActiveScene().buildIndex == 2)
+                {
+                    SceneManager.LoadScene(1);
+                }
+                else // If the player is already on Level 1, they will just restart.
+                {
+                    NewGame();
+                }
             }
-            
             yield return null;
-        }
-        
-        // Checks the current scene. If the player is on Level 2, they will restart at Level 1.
-        if (SceneManager.GetActiveScene().buildIndex == 2)
-        {
-            SceneManager.LoadScene(1);
-        }
-        else // If the player is already on Level 1, they will just restart.
-        {
-            NewGame();
         }
     }
     
