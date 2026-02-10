@@ -25,7 +25,6 @@ public class GameManager : MonoBehaviour
     public GameObject nextLevelScreen;
     
     // Text for UI
-    public Text _scoreText;
     public Text _livesText;
     public Text _timeText;
 
@@ -43,12 +42,9 @@ public class GameManager : MonoBehaviour
     {
         // Starts a new game.
         NewGame();
-    }
-    
-    private void SetScore(int score)
-    {
-        this._score = score;
-        _scoreText.text = score.ToString();
+        
+        // Retrieves the player's score from the ScoreTracker.
+        _score = PlayerPrefs.GetInt("score");
     }
 
     private void SetLives(int lives)
@@ -63,8 +59,7 @@ public class GameManager : MonoBehaviour
         // Hides the game over menu/UI.
         gameOverScreen.SetActive(false);
         
-        // Resets score and provides a fresh set of lives.
-        SetScore(0);
+        // Resets the player's lives.
         SetLives(3);
         
         // Starts a new level.
@@ -142,6 +137,10 @@ public class GameManager : MonoBehaviour
             {
                 playAgain = true;
                 
+                // Resets the player's score to 0.
+                _score = 0;
+                FindObjectOfType<ScoreTracker>().SetScore(_score);
+                
                 // Checks the current scene. If the player is on Level 2, they will restart at Level 1.
                 if (SceneManager.GetActiveScene().buildIndex == 2)
                 {
@@ -160,6 +159,7 @@ public class GameManager : MonoBehaviour
     private IEnumerator NewScene()
     {
         // Waits for the celebration animation to finish playing before continuing.
+        // FIXME: adjust time as needed.
         yield return new WaitForSecondsRealtime(3);
         
         // If the player has cleared the level, they will either move onto the next level or see the win screen.
@@ -167,6 +167,9 @@ public class GameManager : MonoBehaviour
         {
             // Turns on the next level screen.
             nextLevelScreen.SetActive(true);
+            
+            // Stores the player's current score in ScoreTracker.
+            FindObjectOfType<ScoreTracker>().SetScore(_score);
             
             // Wait for another few seconds before continuing to switch the scene.
             yield return new WaitForSecondsRealtime(3);
@@ -193,13 +196,15 @@ public class GameManager : MonoBehaviour
         int bonusPoints = _time * 20;
         
         // Player gets 50 points + however many bonusPoints after clearing a home.
-        SetScore(_score + bonusPoints + 50);
+        _score += bonusPoints + 50;
+        FindObjectOfType<ScoreTracker>().SetScore(_score);
         
         // If the level has been cleared after the home is collected, a new level will begin.
         if (Cleared())
         {
             // Player gets 1000 points after clearing a level.
-            SetScore(_score + 1000);
+            _score += 1000;
+            FindObjectOfType<ScoreTracker>().SetScore(_score);
             
             // NewScene() is called to switch scenes.
             StartCoroutine(NewScene());
@@ -213,7 +218,8 @@ public class GameManager : MonoBehaviour
     // Whenever the player moves to a new farthest row, they will gain 10 points.
     public void AdvancedRow()
     {
-        SetScore(_score + 10);
+        _score += 10;
+        FindObjectOfType<ScoreTracker>().SetScore(_score);
     }
     
     // Removes a life, respawns player, determines if game continues or ends.
