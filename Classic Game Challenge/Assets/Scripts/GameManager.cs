@@ -26,7 +26,9 @@ public class GameManager : MonoBehaviour
     public Text _scoreText;
     public Text _livesText;
     public Text _timeText;
-
+    private SpriteRenderer _spriteRenderer;
+    private GameObject pickupSprite;
+   
     // As soon as the script loads, this method triggers.
     private void Awake()
     {
@@ -34,11 +36,14 @@ public class GameManager : MonoBehaviour
         _homes = FindObjectsOfType<Home>();
         _player = FindObjectOfType<Frogger>();
         audioSource = GetComponent<AudioSource>();
+        _spriteRenderer = _player.GetComponent<SpriteRenderer>();
+        pickupSprite = GameObject.Find("PickUpSprite");
     }
     
     // As soon as the game starts, this method triggers.
     private void Start()
     {
+        pickupSprite.SetActive(false);
         // Starts a new game.
         NewGame();
         
@@ -90,8 +95,10 @@ public class GameManager : MonoBehaviour
     {
         // Stops all current coroutines since this includes the timer.
         StopAllCoroutines();
-        
+
         // Calls the Frogger.cs Respawn() method and then re-starts necessary coroutines.
+        _spriteRenderer.enabled = true;
+        pickupSprite.SetActive(false);
         _player.Respawn();
         StartCoroutine(Timer(30)); 
         StartCoroutine(ExitGame());
@@ -175,7 +182,9 @@ public class GameManager : MonoBehaviour
     public void HomeCollected()
     {
         // FIXME: fix this sprite if we add a celebration animation/sprite.
-        _player.gameObject.SetActive(false);
+        _spriteRenderer.enabled = false;
+        pickupSprite.SetActive(true);
+        //_player.gameObject.SetActive(false);
 
         audioSource.PlayOneShot(duckSqueak); //plays squeak when duck is picked up
 
@@ -196,7 +205,11 @@ public class GameManager : MonoBehaviour
         }
         else // Otherwise, a new round begins.
         {
+<<<<<<< Updated upstream
             // NewRound() is called after a 1-second delay.
+=======
+            
+>>>>>>> Stashed changes
             Invoke(nameof(Respawn), 1f);
         }
     }
