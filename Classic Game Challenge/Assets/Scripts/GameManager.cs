@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     private int _score;
     private int _lives;
     private int _time;
-    
+
     // Variables used to store audio.
     private AudioSource audioSource;
     public AudioClip duckSqueak;
@@ -19,36 +19,37 @@ public class GameManager : MonoBehaviour
 
     // The player.
     private Frogger _player;
-    
+
     // The game over & next level screens.
     public GameObject gameOverScreen;
     public GameObject nextLevelScreen;
-    
+
     // Text for UI
-    public Text _scoreText;
     public Text _livesText;
     public Text _timeText;
+    private SpriteRenderer _spriteRenderer;
+    private GameObject pickupSprite;
 
     // As soon as the script loads, this method triggers.
     private void Awake()
     {
-    // Finds all the Home prefabs & the player in the level scene.
+        // Finds all the Home prefabs & the player in the level scene.
         _homes = FindObjectsOfType<Home>();
         _player = FindObjectOfType<Frogger>();
         audioSource = GetComponent<AudioSource>();
+        _spriteRenderer = _player.GetComponent<SpriteRenderer>();
+        pickupSprite = GameObject.Find("PickUpSprite");
     }
-    
+
     // As soon as the game starts, this method triggers.
     private void Start()
     {
+        pickupSprite.SetActive(false);
         // Starts a new game.
         NewGame();
-    }
-    
-    private void SetScore(int score)
-    {
-        this._score = score;
-        _scoreText.text = score.ToString();
+
+        // Retrieves the player's score from the ScoreTracker.
+        _score = PlayerPrefs.GetInt("score");
     }
 
     private void SetLives(int lives)
@@ -56,17 +57,16 @@ public class GameManager : MonoBehaviour
         this._lives = lives;
         _livesText.text = lives.ToString();
     }
-    
+
     // The beginning of the game.
     private void NewGame()
-    { 
+    {
         // Hides the game over menu/UI.
         gameOverScreen.SetActive(false);
-        
-        // Resets score and provides a fresh set of lives.
-        SetScore(0);
+
+        // Resets the player's lives.
         SetLives(3);
-        
+
         // Starts a new level.
         NewLevel();
     }
@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
         {
             _homes[i].enabled = false;
         }
-        
+
         // Respawns the player.
         Respawn();
     }
@@ -89,24 +89,26 @@ public class GameManager : MonoBehaviour
     {
         // Stops all current coroutines since this includes the timer.
         StopAllCoroutines();
-        
+
         // Calls the Frogger.cs Respawn() method and then re-starts necessary coroutines.
+        _spriteRenderer.enabled = true;
+        pickupSprite.SetActive(false);
         _player.Respawn();
-        StartCoroutine(Timer(30)); 
+        StartCoroutine(Timer(30));
     }
-    
+
     // Ends the game.
     private void GameOver()
     {
         // Hides the player.
         _player.gameObject.SetActive(false);
-        
+
         // Turns on the game over menu/UI.
         gameOverScreen.SetActive(true);
-        
+
         // Stops all coroutines, including the game timer. 
         StopAllCoroutines();
-        
+
         // Starts the PlayAgain() coroutine.
         StartCoroutine(PlayAgain());
     }
@@ -124,11 +126,11 @@ public class GameManager : MonoBehaviour
             _time--;
             _timeText.text = _time.ToString();
         }
-        
+
         // If time runs out, the player dies.
         _player.Death();
     }
-    
+
     // Checks if the player would like to play again.
     private IEnumerator PlayAgain()
     {
@@ -141,35 +143,41 @@ public class GameManager : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Return))
             {
                 playAgain = true;
-                NewGame();
+
+                // Resets the player's score to 0.
+                _score = 0;
+                FindObjectOfType<ScoreTracker>().SetScore(_score);
+
+                // Checks the current scene. If the player is on Level 2, they will restart at Level 1.
+                if (SceneManager.GetActiveScene().buildIndex == 2)
+                {
+                    SceneManager.LoadScene(1);
+                }
+                else // If the player is already on Level 1, they will just restart.
+                {
+                    NewGame();
+                }
             }
-            
             yield return null;
         }
-        
-        // Checks the current scene. If the player is on Level 2, they will restart at Level 1.
-        if (SceneManager.GetActiveScene().buildIndex == 2)
-        {
-            SceneManager.LoadScene(1);
-        }
-        else // If the player is already on Level 1, they will just restart.
-        {
-            NewGame();
-        }
     }
-    
+
     // Coroutine that switches to the next scene.
     private IEnumerator NewScene()
     {
         // Waits for the celebration animation to finish playing before continuing.
+        // FIXME: adjust time as needed.
         yield return new WaitForSecondsRealtime(3);
-        
+
         // If the player has cleared the level, they will either move onto the next level or see the win screen.
         if (SceneManager.GetActiveScene().buildIndex == 1)
         {
             // Turns on the next level screen.
             nextLevelScreen.SetActive(true);
-            
+
+            // Stores the player's current score in ScoreTracker.
+            FindObjectOfType<ScoreTracker>().SetScore(_score);
+
             // Wait for another few seconds before continuing to switch the scene.
             yield return new WaitForSecondsRealtime(3);
             SceneManager.LoadScene(2);
@@ -187,27 +195,32 @@ public class GameManager : MonoBehaviour
     public void HomeCollected()
     {
         // FIXME: fix this sprite if we add a celebration animation/sprite.
-        _player.gameObject.SetActive(false);
+        _spriteRenderer.enabled = false;
+        pickupSprite.SetActive(true);
+        //_player.gameObject.SetActive(false);
 
         audioSource.PlayOneShot(duckSqueak); //plays squeak when duck is picked up
 
         // Calculates bonus points based on time remaining. For every second remaining, you get 20 points.
         int bonusPoints = _time * 20;
-        
+
         // Player gets 50 points + however many bonusPoints after clearing a home.
-        SetScore(_score + bonusPoints + 50);
-        
+        _score += bonusPoints + 50;
+        FindObjectOfType<ScoreTracker>().SetScore(_score);
+
         // If the level has been cleared after the home is collected, a new level will begin.
         if (Cleared())
         {
             // Player gets 1000 points after clearing a level.
-            SetScore(_score + 1000);
-            
+            _score += 1000;
+            FindObjectOfType<ScoreTracker>().SetScore(_score);
+
             // NewScene() is called to switch scenes.
             StartCoroutine(NewScene());
         }
         else // Otherwise, a new round begins and the player is respawned normally.
         {
+            // NewRound() is called after a 1-second delay.
             Invoke(nameof(Respawn), 1f);
         }
     }
@@ -215,9 +228,10 @@ public class GameManager : MonoBehaviour
     // Whenever the player moves to a new farthest row, they will gain 10 points.
     public void AdvancedRow()
     {
-        SetScore(_score + 10);
+        _score += 10;
+        FindObjectOfType<ScoreTracker>().SetScore(_score);
     }
-    
+
     // Removes a life, respawns player, determines if game continues or ends.
     public void Died()
     {
@@ -234,7 +248,7 @@ public class GameManager : MonoBehaviour
             Invoke(nameof(GameOver), 1f);
         }
     }
-    
+
     // Checks if the level has been cleared.
     private bool Cleared()
     {

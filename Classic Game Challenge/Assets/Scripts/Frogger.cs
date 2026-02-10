@@ -8,6 +8,7 @@ public class Frogger : MonoBehaviour
     public Sprite idleSprite;
     public Sprite leapSprite;
     public Sprite deadSprite;
+    
     private AudioSource audioSource;
     public AudioClip moveSound;
     public AudioClip waterSplash;
@@ -26,6 +27,7 @@ public class Frogger : MonoBehaviour
         _spriteRenderer = GetComponent<SpriteRenderer>();
         spawnPosition = transform.position;
         audioSource = GetComponent<AudioSource>();
+        
     }
     
     // Checks for player movement inputs every frame.
